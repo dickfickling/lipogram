@@ -1,6 +1,6 @@
 import db
 from . import app
-from server.utils.utils import action_fail, check_required
+from server.utils.utils import action_success, action_fail, check_required, get_synonyms
 from flask import request,render_template,redirect,url_for
 from functools import wraps
 
@@ -33,3 +33,12 @@ def url_require(required_args):
 @app.route("/", methods = [ 'GET' ])
 def home():
     return render_template('base.html')
+
+@app.route("/<string:word>", defaults={'letter': None}, methods = [ 'GET' ])
+@app.route("/<string:word>/<string:letter>", methods = [ 'GET' ])
+def synonyms(word, letter):
+    # TODO: add synonyms (before filter) to localdb
+    syns = get_synonyms(word)
+    if letter:
+        syns = filter(lambda word: not letter in word, syns)
+    return action_success(list(syns))

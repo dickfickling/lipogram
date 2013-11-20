@@ -6,6 +6,7 @@ from datetime import datetime
 from requests import get
 import sys
 from math import radians, cos, sin, asin, sqrt
+from server.utils import secrets
 
 def random_number():
     return 4
@@ -49,3 +50,10 @@ def xcurstr(cents):
 
 def to_int(fstr):
     return int(round(float(fstr)*100))
+
+def get_synonyms(word):
+    ret = set()
+    for part_of_speech,results in get(secrets.BHL_BASE % word).json().items():
+        ret |= set(results.get('syn', []))
+        ret |= set(results.get('sim', []))
+    return ret
