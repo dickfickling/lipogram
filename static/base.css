@@ -1,0 +1,16 @@
+#mainform
+{
+  height:100%;
+}
+#lipotext
+{
+    height:100%;
+    width:100%;
+    border: none;
+    overflow: auto;
+    outline: none;
+
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+}

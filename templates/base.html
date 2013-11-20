@@ -1,0 +1,70 @@
+<head>
+    <!--
+    TODO:
+     - match more than just space, both for checking last entered and lastindexof
+     - do some fancy stuff with choosing the lipogram letter
+     - style, I guess
+     - be less dumb when people type too quickly
+     - actually look up synonyms...
+     - use a separate file for js I guess
+    -->
+    <title>Lipogram</title>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='base.css') }}">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{
+        url_for('static', filename='jquery-1.10.2.min.js') }}">\x3C/script>')</script>
+    <script>
+        function getLastWord(text) {
+            // \xA0 to deal with nbsps as well as spaces
+            var lastWord = text.substr(1+Math.max(text.lastIndexOf(' '),
+                                                text.lastIndexOf('\xA0')));
+            return lastWord;
+        }
+
+        function placeCaretAtEnd(el) {
+            el.focus();
+            if (typeof window.getSelection != "undefined"
+            && typeof document.createRange != "undefined") {
+                var range = document.createRange();
+                range.selectNodeContents(el);
+                range.collapse(false);
+                var sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+                } else if (typeof document.body.createTextRange != "undefined") {
+                var textRange = document.body.createTextRange();
+                textRange.moveToElementText(el);
+                textRange.collapse(false);
+                textRange.select();
+            }
+        }
+
+        $( document ).ready(function() {
+            $('#lipotext').focus();
+
+            $('#lipotext').keyup(function(event) {
+                var c = String.fromCharCode(event.keyCode);
+                var text = $('#lipotext').text();
+                if (c == ' '){
+                    // this should NOT get the last word
+                    var word = getLastWord(text.slice(0, -1));
+                    if(word.indexOf('e') != -1){
+                        // cross out the word (impossible in a textarea)
+                        // look up synonyms, drop them down (okay i get it)
+                        re = new RegExp(word, 'g');
+                        $('#lipotext').html($('#lipotext').html().replace(re,
+                            '<del>' + word + '</del>'));
+                        placeCaretAtEnd($('#lipotext').get(0));
+
+                    }
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id=mainform>
+        <div id="lipotext" contenteditable='true'>
+        </div>
+    </div>
+</body>
