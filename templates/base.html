@@ -49,8 +49,6 @@
                     // this should NOT get the last word
                     var word = getLastWord(text.slice(0, -1));
                     if(word.indexOf('e') != -1){
-                        // cross out the word (impossible in a textarea)
-                        // look up synonyms, drop them down (okay i get it)
                         re = new RegExp(word, 'g');
                         $('#lipotext').html($('#lipotext').html().replace(re,
                             '<del>' + word + '</del>'));
