@@ -1,4 +1,3 @@
-import db
 from . import app, mongo
 from server.utils.utils import action_success, action_fail, check_required, get_synonyms
 from flask import request,render_template,redirect,url_for
@@ -37,14 +36,14 @@ def home():
 @app.route("/<string:word>", defaults={'letter': None}, methods = [ 'GET' ])
 @app.route("/<string:word>/<string:letter>", methods = [ 'GET' ])
 def synonyms(word, letter):
-    syns = mongo.db.synonyms.find_one({'word' : word, 'letter' : letter})
+    syns = mongo.db.synonyms.find_one({'word' : word})
 
     if syns:
         syns = syns['synonyms']
     else:
         syns = get_synonyms(word)
-        if letter:
-            syns = filter(lambda word: not letter in word, syns)
-        mongo.db.synonyms.insert({'word' : word, 'letter' : letter, 'synonyms' : syns})
+        mongo.db.synonyms.insert({'word' : word, 'synonyms' : syns})
+    if letter:
+        syns = filter(lambda word: not letter in word, syns)
 
     return action_success(list(syns))

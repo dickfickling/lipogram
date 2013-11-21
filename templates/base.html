@@ -5,8 +5,8 @@
      - do some fancy stuff with choosing the lipogram letter
      - style, I guess
      - be less dumb when people type too quickly
-     - actually look up synonyms...
      - use a separate file for js I guess
+     - sanitation - esp. when creating css ids from word - if quotes, we fucked
     -->
     <title>Lipogram</title>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='base.css') }}">
@@ -14,10 +14,11 @@
     <script>window.jQuery || document.write('<script src="{{
         url_for('static', filename='jquery-1.10.2.min.js') }}">\x3C/script>')</script>
     <script>
+        var WHATIF_ROOT = {{ request.script_root|tojson|safe }};
         function getLastWord(text) {
             // \xA0 to deal with nbsps as well as spaces
             var lastWord = text.substr(1+Math.max(text.lastIndexOf(' '),
-                                                text.lastIndexOf('\xA0')));
+                                            text.lastIndexOf('\xA0')));
             return lastWord;
         }
 
@@ -47,13 +48,18 @@
                 var text = $('#lipotext').text();
                 if (c == ' '){
                     // this should NOT get the last word
-                    var word = getLastWord(text.slice(0, -1));
+                    var word = getLastWord(text.trim());
                     if(word.indexOf('e') != -1){
                         re = new RegExp(word, 'g');
                         $('#lipotext').html($('#lipotext').html().replace(re,
-                            '<del>' + word + '</del>'));
+                        '<select id="' + word + '"><option value=1>' + word + '</option></select>'));
                         placeCaretAtEnd($('#lipotext').get(0));
 
+                        $.get( WHATIF_ROOT + '/' + word + '/' + 'e', function( data ) {
+                            $.each(data['payload'], function(index, value) {
+                                $('#' + word).append(new Option(value, index+1));
+                            });
+                        });
                     }
                 }
             });
@@ -63,6 +69,8 @@
 <body>
     <div id=mainform>
         <div id="lipotext" contenteditable='true'>
+        </div>
+        <div id="liposuggestion">
         </div>
     </div>
 </body>

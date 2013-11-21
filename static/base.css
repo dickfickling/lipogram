@@ -2,7 +2,7 @@
 {
   height:100%;
 }
-#lipotext
+#lipotext,#liposuggestion
 {
     height:100%;
     width:100%;
@@ -13,4 +13,12 @@
     box-shadow: none;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
+}
+#lipotext
+{
+    height:80%;
+}
+#liposuggestion
+{
+    height:20%;
 }

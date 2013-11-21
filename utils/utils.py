@@ -53,7 +53,10 @@ def to_int(fstr):
 
 def get_synonyms(word):
     ret = set()
-    for part_of_speech,results in get(secrets.BHL_BASE % word).json().items():
+    resp = get(secrets.BHL_BASE % word)
+    if not 'javascript' in resp.headers['content-type']:
+        return ret
+    for part_of_speech,results in resp.json().items():
         ret |= set(results.get('syn', []))
         ret |= set(results.get('sim', []))
     return ret
