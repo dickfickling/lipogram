@@ -42,8 +42,8 @@ def synonyms(word, letter):
         syns = syns['synonyms']
     else:
         syns = get_synonyms(word)
-        mongo.db.synonyms.insert({'word' : word, 'synonyms' : syns})
+        mongo.db.synonyms.insert({'word' : word, 'synonyms' : list(syns)})
     if letter:
         syns = filter(lambda word: not letter in word, syns)
 
-    return action_success(list(syns))
+    return action_success(sorted(syns))
